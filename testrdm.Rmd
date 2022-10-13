@@ -208,7 +208,6 @@ confusionMatrix(as.factor(predictions_combined_model), as.factor(testing_data$yy
 ```
 
 
-<<<<<<< HEAD
 Hello
 Want to reach at least 16.67% accuracy; currently 11.5%
 Calculate success rate for each cluster
@@ -216,5 +215,3 @@ Decide target clusters
 =======
 ## Conclusion
 
-
->>>>>>> 64a2f6a4365914b9299e67ae65cfaceb172e917a
