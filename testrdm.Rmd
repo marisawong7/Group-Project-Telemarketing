@@ -55,6 +55,44 @@ normalize <- function(x) {
 tele_norm <- as.data.frame(lapply(tele_random, normalize))
 ```
 
+## K-Means Clustering
+
+```{r}
+tele_norm_k_means <- tele_norm
+tele_norm_k_means$yyes <- NULL
+k_means_clusters <- kmeans(tele_norm_k_means, 5)
+k_means_clusters$size
+k_means_clusters$centers
+tele_norm_k_means$yyes <- tele_norm$yyes
+tele_norm_k_means$cluster <- k_means_clusters$cluster
+summary(tele_norm_k_means)
+
+# Calculate number of 1s for yyes for each cluster
+num_yyes_1 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 1,]$yyes)
+num_yyes_2 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 2,]$yyes)
+num_yyes_3 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 3,]$yyes)
+num_yyes_4 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 4,]$yyes)
+num_yyes_5 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 5,]$yyes)
+
+# Calculate the success rate for each cluster
+(success_rate_1 <- num_yyes_1 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 1,]))
+(success_rate_2 <- num_yyes_2 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 2,]))
+(success_rate_3 <- num_yyes_3 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 3,]))
+(success_rate_4 <- num_yyes_4 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
+(success_rate_5 <- num_yyes_5 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 5,]))
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Getting Train and Test Samples for KNN
 
@@ -171,16 +209,5 @@ confusionMatrix(as.factor(predictions_combined_model), as.factor(testing_data$yy
 
 
 ## Conclusion
-
-
-
-
-
-## K-Means Clustering
-
-```{r}
-
-```
-
 
 
