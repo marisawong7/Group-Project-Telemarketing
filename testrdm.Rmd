@@ -60,6 +60,7 @@ tele_norm <- as.data.frame(lapply(tele_random, normalize))
 ```{r}
 tele_norm_k_means <- tele_norm
 tele_norm_k_means$yyes <- NULL
+set.seed(12345) # Used same seed as professor
 k_means_clusters <- kmeans(tele_norm_k_means, 5)
 k_means_clusters$size
 k_means_clusters$centers
@@ -80,6 +81,42 @@ num_yyes_5 <- sum(tele_norm_k_means[tele_norm_k_means$cluster == 5,]$yyes)
 (success_rate_3 <- num_yyes_3 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 3,]))
 (success_rate_4 <- num_yyes_4 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
 (success_rate_5 <- num_yyes_5 / nrow(tele_norm_k_means[tele_norm_k_means$cluster == 5,]))
+```
+
+## Cluster 1
+
+### Cluster 1 Training and Testing Data
+```{r}
+cluster_1_data <- tele_norm_k_means[tele_norm_k_means$cluster == 1,]
+cluster_1_data$cluster <- NULL
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+tele_random_1 <- cluster_1_data[sample(nrow(cluster_1_data)),]
+
+# Get 70% of data to be training data
+n_train_1 <- round(nrow(cluster_1_data) * 0.7)
+train_1 <- tele_random_1[1:n_train_1,]
+# Get 30% of data to be testing data
+test_1 <- tele_random_1[n_train_1 + 1: nrow(cluster_1_data),]
+
+```
+
+### Cluster 1 Logistic Regression
+```{r}
+library(gmodels)
+library(caret)
+# Create logistic regression model with all the predictor variables
+glm_model_1 <- glm(formula = yyes ~ ., data = test_1, family = "binomial")
+summary(glm_model_1)
+# Get response values for testing data
+prediction_values_glm1 <- predict(glm_model_1, newdata = test_1, type = "response")
+# Get predictions for testing data
+predictions_glm1 <- ifelse(prediction_values_glm1 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = predictions_glm1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm1), as.factor(test_1$yyes), positive = "1")
 ```
 
 
