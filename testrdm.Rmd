@@ -125,16 +125,73 @@ confusionMatrix(as.factor(predictions_glm1), as.factor(test_1$yyes), positive = 
 
 library(neuralnet)
 
+# Model 1 (Baseline)
 model1_1 <- neuralnet(formula = yyes ~ ., data = train_1)
 plot(model1_1)
 prediction1_1 <- predict(model1_1, newdata = test_1)
 binaryprediction1_1 <- ifelse(prediction1_1 > 0.5, 1, 0)
-# Create Confusion Matrix
 library(gmodels)
 library(caret)
+# Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction1_1, propsq = FALSE)
 # Evaluate confusion matrix
 confusionMatrix(as.factor(binaryprediction1_1), as.factor(test_1$yyes), positive = "1")
+# Kappa 0.1215
+
+# Model 2 (Adding Nodes)
+model2_1 <- neuralnet(formula = yyes ~ ., data = train_1, hidden = 3)
+plot(model2_1)
+prediction2_1 <- predict(model2_1, newdata = test_1)
+binaryprediction2_1 <- ifelse(prediction2_1 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = binaryprediction2_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction2_1), as.factor(test_1$yyes), positive = "1")
+# Kappa 0.0566
+
+# Model 3 (Adding Layers)
+model3_1 <- neuralnet(formula = yyes ~ ., data = train_1, hidden = c(2,3))
+plot(model3_1)
+prediction3_1 <- predict(model3_1, newdata = test_1)
+binaryprediction3_1 <- ifelse(prediction3_1 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = binaryprediction3_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction3_1), as.factor(test_1$yyes), positive = "1")
+#Kappa 0.0685
+
+# Model 4 (Adjusting Binary Prediction Definition)
+model4_1 <- neuralnet(formula = yyes ~ ., data = train_1)
+plot(model4_1)
+prediction4_1 <- predict(model4_1, newdata = test_1)
+binaryprediction4_1 <- ifelse(prediction4_1 > 0.4, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = binaryprediction4_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction4_1), as.factor(test_1$yyes), positive = "1")
+#Kappa 0.0979
+
+# Model 5 (Adjusting Binary Prediction Definition)
+model5_1 <- neuralnet(formula = yyes ~ ., data = train_1)
+plot(model5_1)
+prediction5_1 <- predict(model5_1, newdata = test_1)
+binaryprediction5_1 <- ifelse(prediction5_1 > 0.3, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = binaryprediction5_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction5_1), as.factor(test_1$yyes), positive = "1")
+#Kappa 0.1378
+
+# Model 6 (Adjusting Binary Prediction Definition)
+model6_1 <- neuralnet(formula = yyes ~ ., data = train_1)
+plot(model6_1)
+prediction6_1 <- predict(model6_1, newdata = test_1)
+binaryprediction6_1 <- ifelse(prediction6_1 > 0.2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = binaryprediction6_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction6_1), as.factor(test_1$yyes), positive = "1")
+#Kappa 0.1616
 ```
 
 ## Cluster 1 KNN
