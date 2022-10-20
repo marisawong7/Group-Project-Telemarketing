@@ -131,6 +131,11 @@ confusionMatrix(as.factor(predictions_glm1), as.factor(test_1$yyes), positive = 
 
 
 
+
+
+
+
+
 ## Getting Train and Test Samples for KNN
 
 ```{r}
