@@ -570,6 +570,98 @@ Conclusion for Cluster 3:
 
 
 
+## Cluster 5
+
+### Cluster 5 Training and Testing Data
+```{r}
+cluster_5_data <- tele_norm_k_means[tele_norm_k_means$cluster == 1,]
+cluster_5_data$cluster <- NULL
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+tele_random_5 <- cluster_5_data[sample(nrow(cluster_5_data)),]
+
+# Get 70% of data to be training data
+n_train_5 <- round(nrow(cluster_5_data) * 0.7)
+train_5 <- tele_random_5[1:n_train_5,]
+# Get 30% of data to be testing data
+test_5 <- tele_random_5[(n_train_5 + 1) :nrow(cluster_5_data),]
+```
+
+
+### Cluster 5 Logistic Regression
+```{r}
+library(gmodels)
+library(caret)
+# Create logistic regression model with all the predictor variables
+glm_model_5 <- glm(formula = yyes ~ ., data = test_5, family = "binomial")
+summary(glm_model_5)
+# Get response values for testing data
+prediction_values_glm5 <- predict(glm_model_5, newdata = test_5, type = "response")
+# Get predictions for testing data
+predictions_glm5 <- ifelse(prediction_values_glm5 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_5$yyes, y = predictions_glm5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm5), as.factor(test_5$yyes), positive = "1")
+```
+
+
+## Cluster 5 ANN
+
+```{r, cache = TRUE}
+
+library(neuralnet)
+
+model1_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+plot(model1_5)
+prediction1_5 <- predict(model1_5, newdata = test_5)
+binaryprediction1_5 <- ifelse(prediction1_5 > 0.5, 1, 0)
+# Create Confusion Matrix
+library(gmodels)
+library(caret)
+CrossTable(x = test_5$yyes, y = binaryprediction1_5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive = "1")
+```
+
+
+
+### Cluster 5 kNN
+
+
+```{r}
+train_labels_5 <- train_5$yyes
+test_labels_5 <- test_5$yyes
+train_KNN_5 <- train_5
+train_KNN_5$yyes <- NULL
+test_KNN_5 <- test_5
+test_KNN_5$yyes <- NULL
+library(class)
+library(caret)
+# k_val1_5 <- round(sqrt(nrow(train_5))) 
+k_val1_5 <- 3 
+test_pred1_5 <- knn(train = train_KNN_5, test = test_KNN_5, cl = train_labels_5, k = k_val1_5)
+#Evaluate model results
+library(gmodels)
+CrossTable(x = test_labels_5, y = test_pred1_5, 
+           prop.chisq=FALSE)
+# Evaluate confusion matrix
+confusionMatrix(test_pred1_5, as.factor(test_labels_5), positive = "1")
+```
+
+
+## Cluster 5 Combined Model
+
+```{r}
+# Add up each row of the three predictor vectors for the three chosen models
+added_predictors_5 <- as.numeric(test_pred1_5) + binaryprediction1_5[,1] + predictions_glm5
+predictions_combined_model_5 <- ifelse(added_predictors_5 >= 2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_5$yyes, y = predictions_combined_model_5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_combined_model_5), as.factor(test_5$yyes), positive = "1")
+```
 
 
 
