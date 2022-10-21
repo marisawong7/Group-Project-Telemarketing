@@ -228,6 +228,95 @@ CrossTable(x = test_1$yyes, y = predictions_combined_model_1, propsq = FALSE)
 confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes), positive = "1")
 ```
 
+## Cluster 2
+
+
+### Cluster 2 Training and Testing Data
+```{r}
+cluster_2_data <- tele_norm_k_means[tele_norm_k_means$cluster == 2,]
+cluster_2_data$cluster <- NULL
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+tele_random_2 <- cluster_2_data[sample(nrow(cluster_2_data)),]
+
+# Get 70% of data to be training data
+n_train_2 <- round(nrow(cluster_2_data) * 0.7)
+train_2 <- tele_random_2[1:n_train_2,]
+# Get 30% of data to be testing data
+test_2 <- tele_random_2[(n_train_2 + 1): nrow(cluster_2_data),]
+
+```
+
+### Cluster 2 Logistic Regression
+```{r}
+library(gmodels)
+library(caret)
+# Create logistic regression model with all the predictor variables
+glm_model_2 <- glm(formula = yyes ~ ., data = test_2, family = "binomial")
+summary(glm_model_2)
+# Get response values for testing data
+prediction_values_glm2 <- predict(glm_model_2, newdata = test_2, type = "response")
+# Get predictions for testing data
+predictions_glm2 <- ifelse(prediction_values_glm2 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_2$yyes, y = predictions_glm2, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm2), as.factor(test_2$yyes), positive = "1")
+```
+
+## Cluster 2 ANN
+
+```{r, cache = TRUE}
+
+library(neuralnet)
+
+model2_1 <- neuralnet(formula = yyes ~ ., data = train_2)
+plot(model2_1)
+prediction2_1 <- predict(model2_1, newdata = test_2)
+binaryprediction2_1 <- ifelse(prediction2_1 > 0.5, 1, 0)
+# Create Confusion Matrix
+library(gmodels)
+library(caret)
+CrossTable(x = test_2$yyes, y = binaryprediction2_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction2_1), as.factor(test_2$yyes), positive = "1")
+```
+
+## Cluster 2 KNN
+
+```{r}
+train_labels_2 <- train_2$yyes
+test_labels_2 <- test_2$yyes
+train_KNN_2 <- train_2
+train_KNN_2$yyes <- NULL
+test_KNN_2 <- test_2
+test_KNN_2$yyes <- NULL
+library(class)
+library(caret)
+# k_val1_1 <- round(sqrt(nrow(train_1))) 
+k_val2_1 <-  2
+test_pred2_1 <- knn(train = train_KNN_2, test = test_KNN_2, cl = train_labels_2, k = k_val2_1)
+#Evaluate model results
+library(gmodels)
+CrossTable(x = test_labels_2, y = test_pred2_1, 
+           prop.chisq=FALSE)
+# Evaluate confusion matrix
+confusionMatrix(test_pred2_1, as.factor(test_labels_2), positive = "1")
+```
+
+## Cluster 2 Combined Model
+
+```{r}
+# Add up each row of the three predictor vectors for the three chosen models
+added_predictors_2 <- as.numeric(test_pred2_1) + binaryprediction2_1[,1] + predictions_glm2
+predictions_combined_model2_1 <- ifelse(added_predictors_2 >= 2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_2$yyes, y = predictions_combined_model2_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_combined_model2_1), as.factor(test_2$yyes), positive = "1")
+```
+
 
 
 ## Cluster 3
