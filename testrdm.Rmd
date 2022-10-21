@@ -106,17 +106,79 @@ test_1 <- tele_random_1[(n_train_1 + 1): nrow(cluster_1_data),]
 ```{r}
 library(gmodels)
 library(caret)
+
+# Model 1:
 # Create logistic regression model with all the predictor variables
 glm_model_1 <- glm(formula = yyes ~ ., data = test_1, family = "binomial")
 summary(glm_model_1)
 # Get response values for testing data
 prediction_values_glm1 <- predict(glm_model_1, newdata = test_1, type = "response")
 # Get predictions for testing data
-predictions_glm1 <- ifelse(prediction_values_glm1 > 0.5, 1, 0)
+predictions_glm1 <- ifelse(prediction_values_glm1 > 0.2, 1, 0) # kappa of 0.1905 <- Use this threshold comparison
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.5, 1, 0) # kappa of 0.1354
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.15, 1, 0) # kappa of 0.1763
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.17, 1, 0) # kappa of 0.1824
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.22, 1, 0) # kappa of 0.184
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.19, 1, 0) # kappa of 0.1905
+#predictions_glm1 <- ifelse(prediction_values_glm1 > 0.21, 1, 0) # kappa of 0.184
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_glm1, propsq = FALSE)
 # Evaluate confusion matrix
 confusionMatrix(as.factor(predictions_glm1), as.factor(test_1$yyes), positive = "1")
+
+# Model 2:
+# New model with variables that are statistically significant at an alpha level of 0.1
+glm_model2_1 <- glm(formula = yyes ~ + age + jobstudent + maritalmarried + educationbasic.6y
+                    + educationbasic.9y + educationhigh.school 
+                    + educationprofessional.course + educationuniversity.degree,
+                    data = test_1, family = "binomial")
+summary(glm_model2_1)
+# Get response values for testing data
+prediction_values_glm2_1 <- predict(glm_model2_1, newdata = test_1, type = "response") # Question: make as.vector?
+summary(prediction_values_glm2_1)
+# Get predictions for testing data
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.15, 1, 0) # Kappa of 0.0245
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.04, 1, 0) # Kappa of 0.0164
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.02, 1, 0) # Kappa of -1e-04
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.09, 1, 0) # Kappa of 0.0454
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.12, 1, 0) # Kappa of 0.0238
+predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.07, 1, 0) # Kappa of 0.0566 <- Use this threshold comparison
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.08, 1, 0) # Kappa of 0.0566
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.06, 1, 0) # Kappa of 0.0562
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.075, 1, 0) # Kappa of 0.0465
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = predictions_glm2_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm2_1), as.factor(test_1$yyes), positive = "1")
+
+# Model 3:
+# New model that does not include variables who have large p-values (close to 1)
+glm_model3_1 <- glm(formula = yyes ~ . - jobretired - jobtechnician - jobtechnician - jobunemployed - educationilliterate
+                    - monthaug - monthdec - monthjul - monthjun - monthmay - previous - emp.var.rate,
+                    data = test_1, family = "binomial")
+summary(glm_model3_1)
+# Get response values for testing data
+prediction_values_glm3_1 <- predict(glm_model2_1, newdata = test_1, type = "response")
+summary(prediction_values_glm3_1)
+# Get predictions for testing data
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.07, 1, 0) # Kappa of 0.1405
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.03, 1, 0) # Kappa of 0.0318
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.08, 1, 0) # Kappa of 0.1601
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.12, 1, 0) # Kappa of 0.1724
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.20, 1, 0) # Kappa of 0.1707
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.15, 1, 0) # Kappa of 0.184
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.17, 1, 0) # Kappa of 0.1905
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.18, 1, 0) # Kappa of 0.1921
+predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.19, 1, 0) # Kappa of 0.1938 <- Use this threshold comparison
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.185, 1, 0) # Kappa of 0.1938
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.195, 1, 0) # Kappa of 0.1938
+# Create Confusion Matrix
+CrossTable(x = test_1$yyes, y = predictions_glm3_1, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm3_1), as.factor(test_1$yyes), positive = "1")
+
+# Note: glm_model3_1 is the best model of the three logistic regression models for cluster 1
+#       since it has the largest kappa value of the three
 ```
 
 ## Cluster 1 ANN
@@ -205,8 +267,19 @@ test_KNN_1 <- test_1
 test_KNN_1$yyes <- NULL
 library(class)
 library(caret)
-# k_val1_1 <- round(sqrt(nrow(train_1))) 
-k_val1_1 <- 3 
+#k_val1_1 <- round(sqrt(nrow(train_1))) # kappa of 0
+#k_val1_1 <- 2 # kappa of -0.0073
+k_val1_1 <- 3 # kappa of 0.0536 <- largest kappa found, use this k value
+#k_val1_1 <- 4 # kappa of 0.0269
+#k_val1_1 <- 5 # kappa of 0.0138
+#k_val1_1 <- 10 # kappa of 0.0152
+#k_val1_1 <- 20 # kappa of 0
+#k_val1_1 <- 8 # kappa of 0.0152
+#k_val1_1 <- 9 # kappa of 0.0152
+#k_val1_1 <- 11 # kappa of 0.0152
+#k_val1_1 <- 12 # kappa of 0.0152
+#k_val1_1 <- 13 # kappa of 0
+#k_val1_1 <- 30 # kappa of 0
 test_pred1_1 <- knn(train = train_KNN_1, test = test_KNN_1, cl = train_labels_1, k = k_val1_1)
 #Evaluate model results
 library(gmodels)
@@ -220,7 +293,7 @@ confusionMatrix(test_pred1_1, as.factor(test_labels_1), positive = "1")
 
 ```{r}
 # Add up each row of the three predictor vectors for the three chosen models
-added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction1_1[,1] + predictions_glm1
+added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction6_1[,1] + predictions_glm3_1
 predictions_combined_model_1 <- ifelse(added_predictors_1 >= 2, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_combined_model_1, propsq = FALSE)
@@ -497,6 +570,98 @@ Conclusion for Cluster 3:
 
 
 
+## Cluster 5
+
+### Cluster 5 Training and Testing Data
+```{r}
+cluster_5_data <- tele_norm_k_means[tele_norm_k_means$cluster == 1,]
+cluster_5_data$cluster <- NULL
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+tele_random_5 <- cluster_5_data[sample(nrow(cluster_5_data)),]
+
+# Get 70% of data to be training data
+n_train_5 <- round(nrow(cluster_5_data) * 0.7)
+train_5 <- tele_random_5[1:n_train_5,]
+# Get 30% of data to be testing data
+test_5 <- tele_random_5[(n_train_5 + 1) :nrow(cluster_5_data),]
+```
+
+
+### Cluster 5 Logistic Regression
+```{r}
+library(gmodels)
+library(caret)
+# Create logistic regression model with all the predictor variables
+glm_model_5 <- glm(formula = yyes ~ ., data = test_5, family = "binomial")
+summary(glm_model_5)
+# Get response values for testing data
+prediction_values_glm5 <- predict(glm_model_5, newdata = test_5, type = "response")
+# Get predictions for testing data
+predictions_glm5 <- ifelse(prediction_values_glm5 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_5$yyes, y = predictions_glm5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm5), as.factor(test_5$yyes), positive = "1")
+```
+
+
+## Cluster 5 ANN
+
+```{r, cache = TRUE}
+
+library(neuralnet)
+
+model1_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+plot(model1_5)
+prediction1_5 <- predict(model1_5, newdata = test_5)
+binaryprediction1_5 <- ifelse(prediction1_5 > 0.5, 1, 0)
+# Create Confusion Matrix
+library(gmodels)
+library(caret)
+CrossTable(x = test_5$yyes, y = binaryprediction1_5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive = "1")
+```
+
+
+
+### Cluster 5 kNN
+
+
+```{r}
+train_labels_5 <- train_5$yyes
+test_labels_5 <- test_5$yyes
+train_KNN_5 <- train_5
+train_KNN_5$yyes <- NULL
+test_KNN_5 <- test_5
+test_KNN_5$yyes <- NULL
+library(class)
+library(caret)
+# k_val1_5 <- round(sqrt(nrow(train_5))) 
+k_val1_5 <- 3 
+test_pred1_5 <- knn(train = train_KNN_5, test = test_KNN_5, cl = train_labels_5, k = k_val1_5)
+#Evaluate model results
+library(gmodels)
+CrossTable(x = test_labels_5, y = test_pred1_5, 
+           prop.chisq=FALSE)
+# Evaluate confusion matrix
+confusionMatrix(test_pred1_5, as.factor(test_labels_5), positive = "1")
+```
+
+
+## Cluster 5 Combined Model
+
+```{r}
+# Add up each row of the three predictor vectors for the three chosen models
+added_predictors_5 <- as.numeric(test_pred1_5) + binaryprediction1_5[,1] + predictions_glm5
+predictions_combined_model_5 <- ifelse(added_predictors_5 >= 2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_5$yyes, y = predictions_combined_model_5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_combined_model_5), as.factor(test_5$yyes), positive = "1")
+```
 
 
 
