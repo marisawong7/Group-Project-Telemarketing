@@ -475,13 +475,13 @@ confusionMatrix(test_pred1_3, as.factor(test_labels_3), positive = "1")
 
 ```{r}
 # Add up each row of the three predictor vectors for the three chosen models
-added_predictors_3 <- as.numeric(test_pred1_3) + binaryprediction1_3[,1] + predictions_glm3
+added_predictors_3 <- as.numeric(test_pred1_3) + binaryprediction5_3[,1] + predictions_glm2_3
 predictions_combined_model_3 <- ifelse(added_predictors_3 >= 2, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_3$yyes, y = predictions_combined_model_3, propsq = FALSE)
 # Evaluate confusion matrix
 confusionMatrix(as.factor(predictions_combined_model_3), as.factor(test_3$yyes), positive = "1")
-# Kappa : 0.3794    
+# Kappa : 0.3742    
 ```
 
 ```{}
