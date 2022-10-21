@@ -230,6 +230,184 @@ confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes),
 
 
 
+## Cluster 3
+
+### Cluster 3 Training and Testing Data
+```{r}
+cluster_3_data <- tele_norm_k_means[tele_norm_k_means$cluster == 3,]
+cluster_3_data$cluster <- NULL
+
+# Randomize the rows in the data (shuffling the rows)
+set.seed(12345)
+tele_random_3 <- cluster_3_data[sample(nrow(cluster_3_data)),]
+
+# Get 70% of data to be training data
+n_train_3 <- round(nrow(cluster_3_data) * 0.7)
+train_3 <- tele_random_3[1:n_train_3,]
+# Get 30% of data to be testing data
+test_3 <- tele_random_3[(n_train_3 + 1): nrow(cluster_3_data),]
+
+```
+
+### Cluster 3 Logistic Regression
+```{r}
+library(gmodels)
+library(caret)
+# Create logistic regression model with all the predictor variables
+glm_model_3 <- glm(formula = yyes ~ ., data = test_3, family = "binomial")
+summary(glm_model_3)
+# Get response values for testing data
+prediction_values_glm3 <- predict(glm_model_3, newdata = test_3, type = "response")
+# Get predictions for testing data
+predictions_glm3 <- ifelse(prediction_values_glm3 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = predictions_glm3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm3), as.factor(test_3$yyes), positive = "1") 
+# Kappa 0.3522
+
+# Improve through setting NULL
+test_3$maritalsingle <- NULL
+test_3$educationbasic.9y <- NULL
+test_3$housingyes <- NULL
+test_3$previous <- NULL
+test_3$euribor3m <- NULL
+glm_model2_3 <- glm(formula = yyes ~ ., data = test_3, family = "binomial")
+summary(glm_model2_3)
+# Get response values for testing data
+prediction_values_glm2_3 <- predict(glm_model2_3, newdata = test_3, type = "response")
+# Get predictions for testing data
+predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = predictions_glm2_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_glm2_3), as.factor(test_3$yyes), positive = "1")
+# Kappa : 0.3587 
+# A little higher than base model
+```
+
+## Cluster 3 ANN
+
+```{r, cache = TRUE}
+
+library(neuralnet)
+# Model 1 (Base)
+model1_3 <- neuralnet(formula = yyes ~ ., data = train_3)
+plot(model1_3)
+prediction1_3 <- predict(model1_3, newdata = test_3)
+binaryprediction1_3 <- ifelse(prediction1_3 > 0.5, 1, 0)
+# Create Confusion Matrix
+library(gmodels)
+library(caret)
+CrossTable(x = test_3$yyes, y = binaryprediction1_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction1_3), as.factor(test_3$yyes), positive = "1")
+# Kappa : 0.3079
+
+# Model 2 (Adding Nodes)
+model2_3 <- neuralnet(formula = yyes ~ ., data = train_3, hidden = 3)
+plot(model2_3)
+prediction2_3 <- predict(model2_3, newdata = test_3)
+binaryprediction2_3 <- ifelse(prediction2_3 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = binaryprediction2_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction2_3), as.factor(test_3$yyes), positive = "1")
+# Kappa 0.2232 (Lower)
+
+# Model 3 (Adding Layers)
+model3_3 <- neuralnet(formula = yyes ~ ., data = train_3, hidden = c(1,3))
+plot(model3_3)
+prediction3_3 <- predict(model3_3, newdata = test_3)
+binaryprediction3_3 <- ifelse(prediction3_3 > 0.5, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = binaryprediction3_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction3_3), as.factor(test_3$yyes), positive = "1")
+# Kappa : 0.3139 (higher than base model)
+
+# Model 4 (Adjusting Binary Prediction Definition)
+model4_3 <- neuralnet(formula = yyes ~ ., data = train_3)
+plot(model4_3)
+prediction4_3 <- predict(model4_3, newdata = test_3)
+binaryprediction4_3 <- ifelse(prediction4_3 > 0.4, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = binaryprediction4_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction4_3), as.factor(test_3$yyes), positive = "1")
+#Kappa 0.3715 (higher than base and layers)
+
+# Model 5 (Adjusting Binary Prediction Definition)
+model5_3 <- neuralnet(formula = yyes ~ ., data = train_3)
+plot(model5_3)
+prediction5_3 <- predict(model5_3, newdata = test_3)
+binaryprediction5_3 <- ifelse(prediction5_3 > 0.3, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = binaryprediction5_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction5_3), as.factor(test_3$yyes), positive = "1")
+#Kappa 0.3677 (lower than 0.4)
+
+# Model 6 (Adjusting Binary Prediction Definition)
+model6_3 <- neuralnet(formula = yyes ~ ., data = train_3)
+plot(model6_3)
+prediction6_3 <- predict(model6_3, newdata = test_3)
+binaryprediction6_3 <- ifelse(prediction6_3 > 0.2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = binaryprediction6_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction6_3), as.factor(test_3$yyes), positive = "1")
+#Kappa 0.4071 (highest)
+```
+
+## Cluster 3 KNN
+
+```{r}
+train_labels_3 <- train_3$yyes
+test_labels_3 <- test_3$yyes
+train_KNN_3 <- train_3
+train_KNN_3$yyes <- NULL
+test_KNN_3 <- test_3
+test_KNN_3$yyes <- NULL
+library(class)
+library(caret)
+k_val1_3 <- 3 
+test_pred1_3 <- knn(train = train_KNN_3, test = test_KNN_3, cl = train_labels_3, k = k_val1_3)
+#Evaluate model results
+library(gmodels)
+CrossTable(x = test_labels_3, y = test_pred1_3, 
+           prop.chisq=FALSE)
+# Evaluate confusion matrix
+confusionMatrix(test_pred1_3, as.factor(test_labels_3), positive = "1")
+# Kappa : 0.2514  
+```
+
+## Cluster 3 Combined Model
+
+```{r}
+# Add up each row of the three predictor vectors for the three chosen models
+added_predictors_3 <- as.numeric(test_pred1_3) + binaryprediction1_3[,1] + predictions_glm3
+predictions_combined_model_3 <- ifelse(added_predictors_3 >= 2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_3$yyes, y = predictions_combined_model_3, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(predictions_combined_model_3), as.factor(test_3$yyes), positive = "1")
+# Kappa : 0.3794    
+```
+
+```{}
+Conclusion for Cluster 3:
+- Highest Kappa: 0.4071, using ANN (adjusting binary prediction to 0.2)
+- KNN model is the least accurate one among all models (lowest Kappa)
+- For Logistic Regression, Kappa is improved through setting insignificant variables to NULL, but really small
+- ANN accuracy improves when we add layers but decreases when we add nodes
+- 
+```
+
+
+
+
+
 
 
 
