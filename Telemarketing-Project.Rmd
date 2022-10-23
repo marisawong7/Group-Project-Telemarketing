@@ -147,13 +147,13 @@ prediction_values_glm2_1 <- predict(glm_model2_1, newdata = test_1, type = "resp
 summary(prediction_values_glm2_1)
 # Get predictions for testing data
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.15, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.2222222
-predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.04, 1, 0) # sensitivity of 0.50400, Pos Pred Value of 0.04880 <- Use this threshold comparison
+#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.04, 1, 0) # sensitivity of 0.50400, Pos Pred Value of 0.04880
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.02, 1, 0) # sensitivity of 0.9920, Pos Pred Value of 0.040444
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.09, 1, 0) # sensitivity of 0.0320, Pos Pred Value of 0.210526
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.12, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.20
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.07, 1, 0) # sensitivity of 0.0560, Pos Pred Value of 0.10
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.08, 1, 0) # sensitivity of 0.0480, Pos Pred Value of 0.162162
-#predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.06, 1, 0) # sensitivity of 0.1040, Pos Pred Value of 0.09091
+predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.06, 1, 0) # sensitivity of 0.1040, Pos Pred Value of 0.09091 <- Use this threshold comparison
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.075, 1, 0) # sensitivity of 0.0480, Pos Pred Value of 0.120
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_glm2_1, propsq = FALSE)
@@ -324,7 +324,7 @@ confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes),
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
 # Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
-(num_calls_made_1 <- confusion_matrix_glm2_1$table[3] + confusion_matrix_glm2_1$table[4])
+(num_calls_made_1 <- confusion_matrix_glm2_1$table[2] + confusion_matrix_glm2_1$table[4])
 
 # 3: Calculate the success rate (number of people we will call 
 #    (model predicted yyes to be 1) who actually have a yyes value of 1 
@@ -333,11 +333,12 @@ confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes),
 
 # 4: Calculate the profit per 100 people:
 # (100 * (# calls made / # potential calls made) * success rate * 6) -
-# (100 * success rate * 1)
+# (100 * (# calls made / # potential calls made) * 1)
 (profit_per_100_1 <- (100 * (num_calls_made_1 / num_potential_calls_1) * success_rate_cluster1 * 6) - (100 * (num_calls_made_1 / num_potential_calls_1) * 1))
 
-# 5: Also, calculate what the profit is for this chosen model of this cluster
-(profit_1 <- (num_calls_made_1 * success_rate_cluster1 * 6) - (num_calls_made_1 * (num_calls_made_1 / num_potential_calls_1) * 1))
+# 5: Also, calculate what the profit is for this chosen model of this cluster:
+# (# calls made * success rate * 6) - (# calls made * 1)
+(profit_1 <- (num_calls_made_1 * success_rate_cluster1 * 6) - (num_calls_made_1 * 1))
 ```
 
 
