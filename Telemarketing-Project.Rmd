@@ -206,8 +206,8 @@ library(caret)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction1_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction1_1), as.factor(test_1$yyes), positive = "1")
-# Kappa 0.1215
+(confusion_matrix_model1_ANN1 <- confusionMatrix(as.factor(binaryprediction1_1), as.factor(test_1$yyes), positive = "1"))
+# Sensitivity: 0.056000; Pos Pred Value: 0.388889
 
 # Model 2 (Adding Nodes)
 model2_1 <- neuralnet(formula = yyes ~ ., data = train_1, hidden = 3)
@@ -217,19 +217,20 @@ binaryprediction2_1 <- ifelse(prediction2_1 > 0.5, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction2_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction2_1), as.factor(test_1$yyes), positive = "1")
-# Kappa 0.0566
+(confusion_matrix_model2_ANN1 <- confusionMatrix(as.factor(binaryprediction2_1), as.factor(test_1$yyes), positive = "1"))
+# Sensitivity: 0.088000; Pos Pred Value: 0.423077
+
 
 # Model 3 (Adding Layers)
-model3_1 <- neuralnet(formula = yyes ~ ., data = train_1, hidden = c(2,3))
+model3_1 <- neuralnet(formula = yyes ~ ., data = train_1, hidden = c(2,3), threshold = 0.01, stepmax = 10^5)
 plot(model3_1)
 prediction3_1 <- predict(model3_1, newdata = test_1)
 binaryprediction3_1 <- ifelse(prediction3_1 > 0.5, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction3_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction3_1), as.factor(test_1$yyes), positive = "1")
-#Kappa 0.0685
+(confusion_matrix_model3_ANN1 <-confusionMatrix(as.factor(binaryprediction3_1), as.factor(test_1$yyes), positive = "1"))
+#Sensitivity: 0.040000; Pos Pred Value: 0.384615   
 
 # Model 4 (Adjusting Binary Prediction Definition)
 model4_1 <- neuralnet(formula = yyes ~ ., data = train_1)
@@ -239,19 +240,19 @@ binaryprediction4_1 <- ifelse(prediction4_1 > 0.4, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction4_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction4_1), as.factor(test_1$yyes), positive = "1")
-#Kappa 0.0979
+(confusion_matrix_model4_ANN1 <-confusionMatrix(as.factor(binaryprediction4_1), as.factor(test_1$yyes), positive = "1"))
+#Sensitivity: 0.0240000; Pos Pred Value: 0.3333333
 
 # Model 5 (Adjusting Binary Prediction Definition)
-model5_1 <- neuralnet(formula = yyes ~ ., data = train_1)
+model5_1 <- neuralnet(formula = yyes ~ ., data = train_1, threshold = 0.01, stepmax = 10^5)
 plot(model5_1)
 prediction5_1 <- predict(model5_1, newdata = test_1)
 binaryprediction5_1 <- ifelse(prediction5_1 > 0.3, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction5_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction5_1), as.factor(test_1$yyes), positive = "1")
-#Kappa 0.1378
+(confusion_matrix_model5_ANN1 <-confusionMatrix(as.factor(binaryprediction5_1), as.factor(test_1$yyes), positive = "1"))
+#Sensitivity: 0.072000; Pos Pred Value: 0.642857  
 
 # Model 6 (Adjusting Binary Prediction Definition)
 model6_1 <- neuralnet(formula = yyes ~ ., data = train_1)
@@ -261,8 +262,8 @@ binaryprediction6_1 <- ifelse(prediction6_1 > 0.2, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = binaryprediction6_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction6_1), as.factor(test_1$yyes), positive = "1")
-#Kappa 0.1616
+(confusion_matrix_model6_ANN1 <-confusionMatrix(as.factor(binaryprediction6_1), as.factor(test_1$yyes), positive = "1"))
+#Sensitivity: 0.048000; Pos Pred Value: 0.428571   
 ```
 
 ## Cluster 1 KNN
@@ -302,13 +303,46 @@ CrossTable(x = test_labels_1, y = test_pred1_1,
 
 ```{r}
 # Add up each row of the three predictor vectors for the three chosen models
-added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction6_1[,1] + predictions_glm2_1
+added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction2_1[,1] + predictions_glm2_1
 predictions_combined_model_1 <- ifelse(added_predictors_1 >= 2, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_combined_model_1, propsq = FALSE)
 # Evaluate confusion matrix
 confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes), positive = "1")
 ```
+
+
+## Cluster 1 ANN Profit Calculations
+```{r}
+# 1: Get number of potential calls (number of values in the test set of this cluster)
+(num_potential_calls_ANN1 <- nrow(test_1))
+# 3088 in test set
+
+# 2: Get number of people we will call in this cluster 
+# (number of people we predicted yyes to be 1 in this cluster)
+# Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
+(num_calls_made_ANN1 <- confusion_matrix_model2_ANN1$table[2] + confusion_matrix_model2ANN_1$table[4])
+# 26 calls made
+
+# 3: Calculate the success rate (number of people we will call 
+#    (model predicted yyes to be 1) who actually have a yyes value of 1 
+#    divided by the number of people we will call)
+predicted_correctly_1s <- confusion_matrix_model2_1$table[4]
+(success_rate_clusterANN1 <- predicted_correctly_1s / num_calls_made_ANN1)
+#0.4230769
+
+# 4: Calculate the profit per 100 people:
+# (100 * (# calls made / # potential calls made) * success rate * 6) -
+# (100 * (# calls made/# potential calls made) * 1))
+(profit_per_100_ANN1 <- (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * success_rate_clusterANN1 * 6) - (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
+#1.295337
+
+# 5: Also, calculate what the profit is for this chosen model of this cluster
+(profit_ANN1 <- (num_calls_made_ANN1 * success_rate_clusterANN1 * 6) - (num_calls_made_ANN1 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
+#65.78109
+```
+
+
 
 ## Cluster 1 Additional Data Calculated for Chosen Model
 ```{r}
