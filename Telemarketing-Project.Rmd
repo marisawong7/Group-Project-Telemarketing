@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 NOTE: 
 - to compare models, look at the sensitivity and pos pred values (PPV)
-- we want a sensitivity of at least 0.167 and larger PPV values (but try to balance the two: have both large sensitivity and large PPV)
+- we want a aim for a sensitivity of at least 0.167 and larger PPV values (but try to balance the two: have both large sensitivity and large PPV)
 - the sensitivity is the success rate
 - Info about PPV here: https://www.timeofcare.com/positive-predictive-value/
 - Info about calculation of sensitivity and PPV can be found using the following command in R: ?confusionMatrix
@@ -123,7 +123,12 @@ summary(glm_model_1)
 # Get response values for testing data
 prediction_values_glm1 <- predict(glm_model_1, newdata = test_1, type = "response")
 # Get predictions for testing data
-predictions_glm1 <- ifelse(prediction_values_glm1 > 0.2, 1, 0) # sensitivity of 0.128, Pos Pred Value of 0.50 <- Use this threshold comparison (note: sensitivity < 0.167)
+
+# sensitivity of 0.128, Pos Pred Value of 0.50 <- Use this threshold comparison (note: sensitivity < 0.167)
+# num_calls_made_1 = 32, success_rate_cluster1 = 0.5, 
+# profit_per_100_1 = 2.072539, profit_1 = 64 for this threshold comparison:
+predictions_glm1 <- ifelse(prediction_values_glm1 > 0.2, 1, 0)
+
 #predictions_glm1 <- ifelse(prediction_values_glm1 > 0.5, 1, 0) # sensitivity of 0.08, Pos Pred Value of 0.666667
 #predictions_glm1 <- ifelse(prediction_values_glm1 > 0.15, 1, 0) # sensitivity of 0.128, Pos Pred Value of 0.390244
 #predictions_glm1 <- ifelse(prediction_values_glm1 > 0.17, 1, 0) # sensitivity of 0.128, Pos Pred Value of 0.432432
@@ -153,7 +158,12 @@ summary(prediction_values_glm2_1)
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.12, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.20
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.07, 1, 0) # sensitivity of 0.0560, Pos Pred Value of 0.10
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.08, 1, 0) # sensitivity of 0.0480, Pos Pred Value of 0.162162
-predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.06, 1, 0) # sensitivity of 0.1040, Pos Pred Value of 0.09091 <- Use this threshold comparison
+
+# sensitivity of 0.1040, Pos Pred Value of 0.09091 <- use this threshold comparison
+# num_calls_made_1 = 143, success_rate_cluster1 = 0.09090909,
+# profit_per_100_1 = -2.104922, profit_1 = -65 for this threshold comparison of 0.06:
+predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.06, 1, 0)
+
 #predictions_glm2_1 <- ifelse(prediction_values_glm2_1 > 0.075, 1, 0) # sensitivity of 0.0480, Pos Pred Value of 0.120
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_glm2_1, propsq = FALSE)
@@ -171,10 +181,20 @@ prediction_values_glm3_1 <- predict(glm_model2_1, newdata = test_1, type = "resp
 summary(prediction_values_glm3_1)
 # Get predictions for testing data
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.07, 1, 0) # sensitivity of 0.0560, Pos Pred Value of 0.10
-predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.03, 1, 0) # sensitivity of 0.8960, Pos Pred Value of 0.04199 <- Use this threshold comparison (note: could be overfitting the model to the test data since the sensitvity is high while pos pred value is low)
+
+# sensitivity of 0.8960, Pos Pred Value of 0.04199
+# (note: could be overfitting the model to the test data since the sensitivity is high while pos pred value is low)
+# num_calls_made_1 = 2667, success_rate_cluster1 = 0.04199475, profit_per_100_1 = -64.60492, profit_1 = -1995
+# for this threshold comparison of 0.03:
+#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.03, 1, 0)
+
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.08, 1, 0) # sensitivity of 0.0480, Pos Pred Value of 0.162162
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.12, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.20
-#predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.20, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.3333333
+
+# sensitivity of 0.0160, Pos Pred Value of 0.3333333 <- use this threshold comparison
+# num_calls_made_1 = 6, success_rate_cluster1 = 0.3333333,
+# profit_per_100_1 = 0.1943005, profit_1 = 6
+predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.20, 1, 0) 
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.15, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.2222222
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.17, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.250
 #predictions_glm3_1 <- ifelse(prediction_values_glm3_1 > 0.18, 1, 0) # sensitivity of 0.0160, Pos Pred Value of 0.250
@@ -186,8 +206,9 @@ CrossTable(x = test_1$yyes, y = predictions_glm3_1, propsq = FALSE)
 # Evaluate confusion matrix
 (confusion_matrix_glm3_1 <- confusionMatrix(as.factor(predictions_glm3_1), as.factor(test_1$yyes), positive = "1"))
 
-# Note: glm_model2_1 is the best model of the three logistic regression models for cluster 1
-#       since it has a sensitivity > 0.167 and a larger pos pred value compared to the other final models
+# Note: glm_model1_1 is the best model of the three logistic regression models for cluster 1
+#       since it has the largest profit per 100 people of the logistic regression models 
+#       for the thresholds that had profit per 100 people calculated
 ```
 
 ## Cluster 1 ANN
@@ -279,7 +300,12 @@ library(class)
 library(caret)
 #k_val1_1 <- round(sqrt(nrow(train_1))) # sensitivity of 0.00000, Pos Pred Value of NaN
 #k_val1_1 <- 2 # sensitivity of 0.0240, Pos Pred Value of 0.0322581
-k_val1_1 <- 3 # sensitivity of 0.0320, Pos Pred Value of 0.40 <- Use this k value (note: sensitivity is < 0.167 )
+
+# sensitivity of 0.0320, Pos Pred Value of 0.40 <- Use this k value (note: sensitivity is < 0.167)
+# num_calls_made_1_knn = 10, success_rate_cluster1_knn = 0.4, 
+# profit_per_100_1 = 0.4533679, profit_1_knn = 14
+k_val1_1 <- 3 
+
 #k_val1_1 <- 4 # sensitivity of 0.0160, Pos Pred Value of 0.9600909
 #k_val1_1 <- 5 # sensitivity of 0.0080, Pos Pred Value of 0.3333333
 #k_val1_1 <- 10 # sensitivity of 0.0080, Pos Pred Value of 1.0
@@ -303,16 +329,16 @@ CrossTable(x = test_labels_1, y = test_pred1_1,
 
 ```{r}
 # Add up each row of the three predictor vectors for the three chosen models
-added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction2_1[,1] + predictions_glm2_1
+added_predictors_1 <- as.numeric(test_pred1_1) + binaryprediction2_1[,1] + predictions_glm1
 predictions_combined_model_1 <- ifelse(added_predictors_1 >= 2, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_1$yyes, y = predictions_combined_model_1, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes), positive = "1")
+(combined_model_confusionMatrix_1 <- confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes), positive = "1"))
 ```
 
-
 ## Cluster 1 ANN Profit Calculations
+
 ```{r}
 # 1: Get number of potential calls (number of values in the test set of this cluster)
 (num_potential_calls_ANN1 <- nrow(test_1))
@@ -321,20 +347,22 @@ confusionMatrix(as.factor(predictions_combined_model_1), as.factor(test_1$yyes),
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
 # Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
-(num_calls_made_ANN1 <- confusion_matrix_model2_ANN1$table[2] + confusion_matrix_model2ANN_1$table[4])
+(num_calls_made_ANN1 <- confusion_matrix_model2_ANN1$table[2] + confusion_matrix_model2_ANN1$table[4])
 # 26 calls made
 
 # 3: Calculate the success rate (number of people we will call 
 #    (model predicted yyes to be 1) who actually have a yyes value of 1 
 #    divided by the number of people we will call)
-predicted_correctly_1s <- confusion_matrix_model2_1$table[4]
+predicted_correctly_1s <- confusion_matrix_model2_ANN1$table[4]
 (success_rate_clusterANN1 <- predicted_correctly_1s / num_calls_made_ANN1)
 #0.4230769
 
 # 4: Calculate the profit per 100 people:
 # (100 * (# calls made / # potential calls made) * success rate * 6) -
 # (100 * (# calls made/# potential calls made) * 1))
-(profit_per_100_ANN1 <- (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * success_rate_clusterANN1 * 6) - (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
+(profit_per_100_ANN1 <- (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1)
+                         * success_rate_clusterANN1 * 6) - 
+                         (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
 #1.295337
 
 # 5: Also, calculate what the profit is for this chosen model of this cluster
@@ -342,15 +370,13 @@ predicted_correctly_1s <- confusion_matrix_model2_1$table[4]
 #65.78109
 ```
 
+## Cluster 1 Additional Data Calculated for Logistic Regression
 
-
-## Cluster 1 Additional Data Calculated for Chosen Model
 ```{r}
-# Below is an example (note: ANN analysis was not updated,
-# so I do not know if ANN or Combined Model is the chosen model)
-# Will use model glm_model2_1 to demonstrate calculations
-# Want to do these calculations for the chosen model for the given cluster
-# based on comparing Sensitivity and Pos Pred Value
+# Calculating additional data for logistic regression model
+# Note: did run the code for all three logistic regression models 
+# for certain thresholds but only glm_model_1 is shown since it has the 
+# largest profit per 100 people out of the other logistic regression models
 
 # 1: Get number of potential calls (number of values in the test set of this cluster)
 (num_potential_calls_1 <- nrow(test_1))
@@ -358,23 +384,92 @@ predicted_correctly_1s <- confusion_matrix_model2_1$table[4]
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
 # Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
-(num_calls_made_1 <- confusion_matrix_glm2_1$table[2] + confusion_matrix_glm2_1$table[4])
+(num_calls_made_1 <- confusion_matrix_glm1_1$table[2] + confusion_matrix_glm1_1$table[4])
 
 # 3: Calculate the success rate (number of people we will call 
 #    (model predicted yyes to be 1) who actually have a yyes value of 1 
 #    divided by the number of people we will call)
-(success_rate_cluster1 <- confusion_matrix_glm2_1$table[4] / num_calls_made_1)
+(success_rate_cluster1 <- confusion_matrix_glm1_1$table[4] / num_calls_made_1)
 
 # 4: Calculate the profit per 100 people:
 # (100 * (# calls made / # potential calls made) * success rate * 6) -
 # (100 * (# calls made / # potential calls made) * 1)
-(profit_per_100_1 <- (100 * (num_calls_made_1 / num_potential_calls_1) * success_rate_cluster1 * 6) - (100 * (num_calls_made_1 / num_potential_calls_1) * 1))
+(profit_per_100_1 <- (100 * (num_calls_made_1 / num_potential_calls_1) 
+                      * success_rate_cluster1 * 6) - 
+                      (100 * (num_calls_made_1 / num_potential_calls_1) * 1))
 
 # 5: Also, calculate what the profit is for this chosen model of this cluster:
 # (# calls made * success rate * 6) - (# calls made * 1)
 (profit_1 <- (num_calls_made_1 * success_rate_cluster1 * 6) - (num_calls_made_1 * 1))
+
+# Note: This model has the largest profit per 100 people 
+# compared to ANN, KNN, and the combined model
+# Therefore, we will use this model for cluster 1
 ```
 
+## Cluster 1 Additional Data Calculated for KNN
+
+```{r}
+# Calculating additional data for KNN model
+
+# 1: Get number of potential calls (number of values in the test set of this cluster)
+(num_potential_calls_1_knn <- nrow(test_1))
+
+# 2: Get number of people we will call in this cluster 
+# (number of people we predicted yyes to be 1 in this cluster)
+# Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
+(num_calls_made_1_knn <- confusion_matrix_knn_1$table[2] + confusion_matrix_knn_1$table[4])
+
+# 3: Calculate the success rate (number of people we will call 
+#    (model predicted yyes to be 1) who actually have a yyes value of 1 
+#    divided by the number of people we will call)
+(success_rate_cluster1_knn <- confusion_matrix_knn_1$table[4] / num_calls_made_1_knn)
+
+# 4: Calculate the profit per 100 people:
+# (100 * (# calls made / # potential calls made) * success rate * 6) -
+# (100 * (# calls made / # potential calls made) * 1)
+(profit_per_100_1 <- (100 * (num_calls_made_1_knn / num_potential_calls_1_knn) 
+                      * success_rate_cluster1_knn * 6) - 
+                      (100 * (num_calls_made_1_knn / num_potential_calls_1_knn) * 1))
+
+# 5: Also, calculate what the profit is for this chosen model of this cluster:
+# (# calls made * success rate * 6) - (# calls made * 1)
+(profit_1_knn <- (num_calls_made_1_knn * success_rate_cluster1_knn * 6) - (num_calls_made_1_knn * 1))
+```
+
+## Cluster 1 Additional Data Calculated for Combined Model
+
+```{r}
+# Calculating additional data for combined model
+
+# 1: Get number of potential calls (number of values in the test set of this cluster)
+(num_potential_calls_1_combined <- nrow(test_1))
+
+# 2: Get number of people we will call in this cluster 
+# (number of people we predicted yyes to be 1 in this cluster)
+# Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
+(num_calls_made_1_combined <- combined_model_confusionMatrix_1$table[2] + combined_model_confusionMatrix_1$table[4])
+
+# 3: Calculate the success rate (number of people we will call 
+#    (model predicted yyes to be 1) who actually have a yyes value of 1 
+#    divided by the number of people we will call)
+(success_rate_cluster1_combined <- combined_model_confusionMatrix_1$table[4] / num_calls_made_1_combined)
+
+# 4: Calculate the profit per 100 people:
+# (100 * (# calls made / # potential calls made) * success rate * 6) -
+# (100 * (# calls made / # potential calls made) * 1)
+(profit_per_100_1 <- (100 * (num_calls_made_1_combined / num_potential_calls_1_combined) 
+                      * success_rate_cluster1_combined * 6) - 
+                      (100 * (num_calls_made_1_combined / num_potential_calls_1_combined) * 1))
+
+# 5: Also, calculate what the profit is for this chosen model of this cluster:
+# (# calls made * success rate * 6) - (# calls made * 1)
+(profit_1_combined <- (num_calls_made_1_combined * success_rate_cluster1_combined * 6) - (num_calls_made_1_combined * 1))
+```
+
+## Conclusion for Cluster 1
+
+For cluster 1, we have chosen a logistic regression model since it has the largest profit per 100 people ($2.072539). In addition, the cluster only calls 32 people, so it will not be very time consuming to call all these people.
 
 ## Cluster 2
 
