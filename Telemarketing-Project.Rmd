@@ -658,10 +658,10 @@ confusionMatrix(as.factor(predictions_combined_model_3), as.factor(test_3$yyes),
 Conclusion:
 for cluster3, the most accurate model is glm_model2_3 (binary prediction 0.5, exclude large p-value variables)
 number of potential calls are 2896
-we will call 446
-success rate is 0.3049
-profit per 100 people is -2.316478
-profit for this cluster is 680
+we will call 202
+success rate is 0.6732673
+profit per 100 people is -39.14994
+profit for this cluster is 614
 ```
 
 
