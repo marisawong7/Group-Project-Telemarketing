@@ -883,20 +883,19 @@ confusion_matrix_glm1_5 <- confusionMatrix(as.factor(predictions_glm5), as.facto
 
 ```{r, cache = TRUE}
 
-library(neuralnet)
 
-# Model 1 (Base line)
-model1_5 <- neuralnet(formula = yyes ~ ., data = train_5)
-plot(model1_5)
-prediction1_5 <- predict(model1_5, newdata = test_5)
-binaryprediction1_5 <- ifelse(prediction1_5 > 0.5, 1, 0)
-# Create Confusion Matrix
-library(gmodels)
-library(caret)
-CrossTable(x = test_5$yyes, y = binaryprediction1_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive = "1")
-# Sensitivity : 0.31183; Pos Pred Value : 0.50877 
+# # Model 1 (Base line)
+# model1_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+# plot(model1_5)
+# prediction1_5 <- predict(model1_5, newdata = test_5)
+# binaryprediction1_5 <- ifelse(prediction1_5 > 0.5, 1, 0)
+# # Create Confusion Matrix
+# library(gmodels)
+# library(caret)
+# CrossTable(x = test_5$yyes, y = binaryprediction1_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive = "1")
+# # Sensitivity : 0.31183; Pos Pred Value : 0.50877 
 ```
 
 
@@ -956,18 +955,19 @@ confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive
 ```
 
 ```{r}
-# # Model 6 (Adjusting Binary Prediction Definition)
-# model6_5 <- neuralnet(formula = yyes ~ ., data = train_5)
-# plot(model6_5)
-# prediction6_5 <- predict(model6_5, newdata = test_5)
-# binaryprediction6_5 <- ifelse(prediction6_5 > 0.2, 1, 0)
-# # Create Confusion Matrix
-# CrossTable(x = test_5$yyes, y = binaryprediction6_5, propsq = FALSE)
-# # Evaluate confusion matrix
-# confusionMatrix(as.factor(binaryprediction6_5), as.factor(test_5$yyes), positive = "1")
-# #Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
-# 
-# # Comparing all, model6_5 is most accurate, with Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
+library(neuralnet)
+#Model 6 (Adjusting Binary Prediction Definition)
+model6_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+plot(model6_5)
+prediction6_5 <- predict(model6_5, newdata = test_5)
+binaryprediction6_5 <- ifelse(prediction6_5 > 0.2, 1, 0)
+# Create Confusion Matrix
+CrossTable(x = test_5$yyes, y = binaryprediction6_5, propsq = FALSE)
+# Evaluate confusion matrix
+confusionMatrix(as.factor(binaryprediction6_5), as.factor(test_5$yyes), positive = "1")
+#Sensitivity : 0.36559 ; Pos Pred Value : 0.52308
+
+# Comparing all, model6_5 is most accurate, with Sensitivity : 0.36559 ; Pos Pred Value : 0.52308
 ```
 
 
