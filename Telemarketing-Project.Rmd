@@ -585,39 +585,39 @@ test_3 <- tele_random_3[(n_train_3 + 1): nrow(cluster_3_data),]
 ```{r}
 library(gmodels)
 library(caret)
-# Model 1
-# Create logistic regression model with all the predictor variables
-glm_model1_3 <- glm(formula = yyes ~ ., data = test_3, family = "binomial")
-summary(glm_model1_3)
-# Get response values for testing data
-prediction_values_glm1_3 <- predict(glm_model1_3, newdata = test_3, type = "response")
-predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.4, 1, 0)
-# sensitivity: 0.44619 (>0.167); pos pred: 0.59050, use this model
-# predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.5, 1, 0)
-# sensitivity: 0.30045; pos pred: 0.66667
-# predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.2, 1, 0)
-# sensitivity: 0.6682; pos pred: 0.4508
-# Create Confusion Matrix
-CrossTable(x = test_3$yyes, y = predictions_glm1_3, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(predictions_glm1_3), as.factor(test_3$yyes), positive = "1") 
+# # Model 1
+# # Create logistic regression model with all the predictor variables
+# glm_model1_3 <- glm(formula = yyes ~ ., data = test_3, family = "binomial")
+# summary(glm_model1_3)
+# # Get response values for testing data
+# prediction_values_glm1_3 <- predict(glm_model1_3, newdata = test_3, type = "response")
+# predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.4, 1, 0)
+# # sensitivity: 0.44619 (>0.167); pos pred: 0.59050, use this model
+# # predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.5, 1, 0)
+# # sensitivity: 0.30045; pos pred: 0.66667
+# # predictions_glm1_3 <- ifelse(prediction_values_glm1_3 > 0.2, 1, 0)
+# # sensitivity: 0.6682; pos pred: 0.4508
+# # Create Confusion Matrix
+# CrossTable(x = test_3$yyes, y = predictions_glm1_3, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(predictions_glm1_3), as.factor(test_3$yyes), positive = "1") 
 ```
 
 ```{r}
-# # Model 2 - improve through excluding large p-value variables
-# glm_model2_3 <- glm(formula = yyes ~ . - age - jobadmin. - jobentrepreneur - jobhousemaid - jobretired - jobservices - maritalsingle - educationbasic.9y - housingyes - previous
-#                       , data = test_3, family = "binomial")
-# summary(glm_model2_3)
-# prediction_values_glm2_3 <- predict(glm_model2_3, newdata = test_3, type = "response")
-# predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.5, 1, 0)
-# # sensitivity: 0.30493 (>0.167); pos pred: 0.67327, use this model
-# # predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.3, 1, 0)
-# # sensitivity: 0.56054; pos pred: 0.51867
-# # predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.2, 1, 0)
-# # sensitivity: 0.6704; pos pred: 0.4517
-# CrossTable(x = test_3$yyes, y = predictions_glm2_3, propsq = FALSE)
-# confusion_matrix_glm2_3 <- confusionMatrix(as.factor(predictions_glm2_3), as.factor(test_3$yyes), positive = "1") 
-# # Comparing for logistic regression, glm_model2_3 (binary prediction 0.5) is more accurate with sensitivity: 0.30493 (>0.167); pos pred: 0.67327
+# Model 2 - improve through excluding large p-value variables
+glm_model2_3 <- glm(formula = yyes ~ . - age - jobadmin. - jobentrepreneur - jobhousemaid - jobretired - jobservices - maritalsingle - educationbasic.9y - housingyes - previous
+                      , data = test_3, family = "binomial")
+summary(glm_model2_3)
+prediction_values_glm2_3 <- predict(glm_model2_3, newdata = test_3, type = "response")
+predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.5, 1, 0)
+# sensitivity: 0.30493 (>0.167); pos pred: 0.67327, use this model
+# predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.3, 1, 0)
+# sensitivity: 0.56054; pos pred: 0.51867
+# predictions_glm2_3 <- ifelse(prediction_values_glm2_3 > 0.2, 1, 0)
+# sensitivity: 0.6704; pos pred: 0.4517
+CrossTable(x = test_3$yyes, y = predictions_glm2_3, propsq = FALSE)
+confusion_matrix_glm2_3 <- confusionMatrix(as.factor(predictions_glm2_3), as.factor(test_3$yyes), positive = "1")
+# Comparing for logistic regression, glm_model2_3 (binary prediction 0.5) is more accurate with sensitivity: 0.30493 (>0.167); pos pred: 0.67327
 ```
 
 ## Cluster 3 ANN
