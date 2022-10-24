@@ -1104,39 +1104,38 @@ For cluster 5, we have chosen a logistic regression model since it has a positiv
 # cluster 4 (call all people in cluster 4)
 
 # 1: Get number of potential calls
-(num_potential_calls_total <- num_potential_calls_)
-# 3088 in test set
+(num_potential_calls_total <- num_potential_calls_1 + num_potential_calls_2 + num_potential_calls_5 + nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
 
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
 # Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
-(num_calls_made_ANN1 <- confusion_matrix_model2_ANN1$table[2] + confusion_matrix_model2_ANN1$table[4])
-# 26 calls made
+(num_calls_made_total <- num_calls_made_1 + num_calls_made_2 + num_calls_made_5 + num_yyes_1)
 
 # 3: Calculate the success rate (number of people we will call 
 #    (model predicted yyes to be 1) who actually have a yyes value of 1 
 #    divided by the number of people we will call)
-predicted_correctly_1s <- confusion_matrix_model2_ANN1$table[4]
-(success_rate_clusterANN1 <- predicted_correctly_1s / num_calls_made_ANN1)
-#0.4230769
+predicted_correctly_1s_1 <- confusion_matrix_model2_ANN1$table[4]
+predicted_correctly_1s_2 <- confusion_matrix_model2_ANN1$table[4]
+predicted_correctly_1s_5 <- confusion_matrix_model2_ANN1$table[4]
+# use num_yyes_4 for cluster 4 for number of successes
+
+total_successes <- predicted_correctly_1s_1 + predicted_correctly_1s_2 +
+                   predicted_correctly_1s_5 + num_yyes_4
+
+(success_rate_total <- total_successes / num_calls_made_total)
 
 # 4: Calculate the profit per 100 people:
 # (100 * (# calls made / # potential calls made) * success rate * 6) -
 # (100 * (# calls made/# potential calls made) * 1))
-(profit_per_100_ANN1 <- (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1)
-                         * success_rate_clusterANN1 * 6) - 
-                         (100 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
-#1.295337
+(profit_per_100_total <- (100 * (num_calls_made_total / num_potential_calls_total)
+                         * success_rate_total * 6) - 
+                         (100 * (num_calls_made_total / num_potential_calls_total) * 1))
 
 # 5: Also, calculate what the profit is for this chosen model of this cluster
-(profit_ANN1 <- (num_calls_made_ANN1 * success_rate_clusterANN1 * 6) - (num_calls_made_ANN1 * (num_calls_made_ANN1 / num_potential_calls_ANN1) * 1))
-#65.78109
+(profit_total <- (num_calls_made_total * success_rate_total * 6) - 
+    (num_calls_made_total * (num_calls_made_total / num_potential_calls_total) * 1))
 
 ```
-
-
-
-
 
 
 
