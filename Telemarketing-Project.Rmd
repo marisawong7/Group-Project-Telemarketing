@@ -1062,9 +1062,8 @@ confusionMatrix(as.factor(predictions_combined_model_5), as.factor(test_5$yyes),
 #196.217
 ```
 
-
-=======
 ## Conclusion for Cluster 5
+For cluster 5, we have chosen a logistic regression model since it has a positive profit per 100 people ($14.94696). In addition, the chosen logistic regression model for cluster 5 indicates to call 43 people, so it will not be very time consuming to call all these people.
 
 
 ## Chosen Combined Clusters' Additional Data Calculated
