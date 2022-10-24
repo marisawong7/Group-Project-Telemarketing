@@ -1062,10 +1062,20 @@ confusionMatrix(as.factor(predictions_combined_model_5), as.factor(test_5$yyes),
 #196.217
 ```
 
+## Conclusion for Cluster 5
+
+
+
 ## Chosen Combined Clusters' Additional Data Calculated
 ```{r}
 # Do this in meeting 10-23
-# Call people from chosen logistic regression model for cluster 1
+# Call people from: 
+# chosen logistic regression model for cluster 1,
+# chosen logistic regression model for cluster 2,
+# chosen logistic regression model for cluster 5,
+# cluster 4 (call all people in cluster 4)
+
+
 ```
 
 
