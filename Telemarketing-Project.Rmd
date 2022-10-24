@@ -837,48 +837,48 @@ confusion_matrix_glm1_5 <- confusionMatrix(as.factor(predictions_glm5), as.facto
 ```
 
 ```{r}
-# Model 2:
-# New model with variables that are statistically significant at an alpha level of 0.1
-glm_model2_5 <- glm(formula = yyes ~  + jobtechnician + contacttelephone + monthaug + monthmar + emp.var.rate  + cons.price.idx + euribor3m, data = test_5, family = "binomial")
-summary(glm_model2_5)
-prediction_values_glm2_5 <- predict(glm_model2_5, newdata = test_5, type = "response")
-predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.5, 1, 0)
-# Sensitivity : 0.36559  (>0.167); Pos Pred Value : 0.61818;  use this model  
-# predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.4, 1, 0)
-# Sensitivity : 0.37634 ; Pos Pred Value : 0.61404 
-# predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.2, 1, 0)
-# Sensitivity : 0.50538 ;  Pos Pred Value : 0.45192
-#predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.15, 1, 0)
-#Sensitivity : 0.51613 ; Pos Pred Value : 0.43636
-CrossTable(x = test_5$yyes, y = predictions_glm2_5, propsq = FALSE)
-confusionMatrix(as.factor(predictions_glm2_5), as.factor(test_5$yyes), positive = "1") 
-# Comparing for logistic regression, glm_model2_3 (binary prediction 0.5) is more accurate with sensitivity: 0.30493 (>0.167); pos pred: 0.67327
+# #Model 2:
+# # New model with variables that are statistically significant at an alpha level of 0.1
+# glm_model2_5 <- glm(formula = yyes ~  + jobtechnician + contacttelephone + monthaug + monthmar + emp.var.rate  + cons.price.idx + euribor3m, data = test_5, family = "binomial")
+# summary(glm_model2_5)
+# prediction_values_glm2_5 <- predict(glm_model2_5, newdata = test_5, type = "response")
+# predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.5, 1, 0)
+# # Sensitivity : 0.36559  (>0.167); Pos Pred Value : 0.61818;  use this model  
+# # predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.4, 1, 0)
+# # Sensitivity : 0.37634 ; Pos Pred Value : 0.61404 
+# # predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.2, 1, 0)
+# # Sensitivity : 0.50538 ;  Pos Pred Value : 0.45192
+# #predictions_glm2_5 <- ifelse(prediction_values_glm2_5 > 0.15, 1, 0)
+# #Sensitivity : 0.51613 ; Pos Pred Value : 0.43636
+# CrossTable(x = test_5$yyes, y = predictions_glm2_5, propsq = FALSE)
+# confusionMatrix(as.factor(predictions_glm2_5), as.factor(test_5$yyes), positive = "1") 
+# # Comparing for logistic regression, glm_model2_3 (binary prediction 0.5) is more accurate with sensitivity: 0.30493 (>0.167); pos pred: 0.67327
 ```
 
 ```{r}
-# Model 3:
-# New model that does not include variables who have large p-values (close to 1)
-glm_model3_5 <- glm(formula = yyes ~  - jobadmin. - jobblue.collar - jobentrepreneur - jobhousemaid - jobmanagement - jobretired - jobself.employed - jobservices - maritalunknown  - educationbasic.6y - educationbasic.9y - educationhigh.school- educationprofessional.course - educationprofessional.course - monthdec - emp.var.rate - pdaysdummy, data = test_5, family = "binomial")
-summary(glm_model3_5)
-# Get response values for testing data
-prediction_values_glm3_5 <- predict(glm_model2_5, newdata = test_5, type = "response")
-summary(prediction_values_glm3_5)
-#Get predictions for testing data
-# predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.12, 1, 0)
-# Sensitivity : 0.56989;  Pos Pred Value : 0.35333
-# predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.15, 1, 0)
-# Sensitivity : 0.51613 ; Pos Pred Value : 0.43636 
-#predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.2, 1, 0)
-# Sensitivity : 0.50538 ; Pos Pred Value : 0.45192
-predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.55, 1, 0)
-# Sensitivity : 0.26882 ; Pos Pred Value : 0.59524; use this model
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = predictions_glm3_5, propsq = FALSE)
-# Evaluate confusion matrix
-(confusion_matrix_glm3_5 <- confusionMatrix(as.factor(predictions_glm3_5), as.factor(test_5$yyes), positive = "1"))
-
-# Note: glm_model1_5 is the best model of the three logistic regression models for cluster 5
-#       since it has a sensitivity > 0.167 and a larger pos pred value compared to the other final models
+# # Model 3:
+# # New model that does not include variables who have large p-values (close to 1)
+# glm_model3_5 <- glm(formula = yyes ~  - jobadmin. - jobblue.collar - jobentrepreneur - jobhousemaid - jobmanagement - jobretired - jobself.employed - jobservices - maritalunknown  - educationbasic.6y - educationbasic.9y - educationhigh.school- educationprofessional.course - educationprofessional.course - monthdec - emp.var.rate - pdaysdummy, data = test_5, family = "binomial")
+# summary(glm_model3_5)
+# # Get response values for testing data
+# prediction_values_glm3_5 <- predict(glm_model2_5, newdata = test_5, type = "response")
+# summary(prediction_values_glm3_5)
+# #Get predictions for testing data
+# # predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.12, 1, 0)
+# # Sensitivity : 0.56989;  Pos Pred Value : 0.35333
+# # predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.15, 1, 0)
+# # Sensitivity : 0.51613 ; Pos Pred Value : 0.43636 
+# #predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.2, 1, 0)
+# # Sensitivity : 0.50538 ; Pos Pred Value : 0.45192
+# predictions_glm3_5 <- ifelse(prediction_values_glm3_5 > 0.55, 1, 0)
+# # Sensitivity : 0.26882 ; Pos Pred Value : 0.59524; use this model
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = predictions_glm3_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# (confusion_matrix_glm3_5 <- confusionMatrix(as.factor(predictions_glm3_5), as.factor(test_5$yyes), positive = "1"))
+# 
+# # Note: glm_model1_5 is the best model of the three logistic regression models for cluster 5
+# #       since it has a sensitivity > 0.167 and a larger pos pred value compared to the other final models
 ```
 
 
@@ -905,72 +905,72 @@ confusionMatrix(as.factor(binaryprediction1_5), as.factor(test_5$yyes), positive
 
 
 ```{r}
-# Model 2 (Adding Nodes)
-model2_5 <- neuralnet(formula = yyes ~ ., data = train_5, hidden = 3)
-plot(model2_5)
-prediction2_5 <- predict(model2_5, newdata = test_5)
-binaryprediction2_5 <- ifelse(prediction2_5 > 0.5, 1, 0)
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = binaryprediction2_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction2_5), as.factor(test_5$yyes), positive = "1")
-# Sensitivity : 0.32258; Pos Pred Value : 0.45455 
+# # Model 2 (Adding Nodes)
+# model2_5 <- neuralnet(formula = yyes ~ ., data = train_5, hidden = 3)
+# plot(model2_5)
+# prediction2_5 <- predict(model2_5, newdata = test_5)
+# binaryprediction2_5 <- ifelse(prediction2_5 > 0.5, 1, 0)
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = binaryprediction2_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction2_5), as.factor(test_5$yyes), positive = "1")
+# # Sensitivity : 0.32258; Pos Pred Value : 0.45455 
 ```
 
 
 ```{r}
-# Model 3 (Adding Layers)
-model3_5 <- neuralnet(formula = yyes ~ ., data = train_5, hidden = c(2,3), threshold = 0.01, stepmax = 10^5) 
-plot(model3_5)
-prediction3_5 <- predict(model3_5, newdata = test_5)
-binaryprediction3_5 <- ifelse(prediction3_5 > 0.5, 1, 0)
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = binaryprediction3_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction3_5), as.factor(test_5$yyes), positive = "1")
-# Sensitivity : 0.24731;   Pos Pred Value : 0.44231
+# # Model 3 (Adding Layers)
+# model3_5 <- neuralnet(formula = yyes ~ ., data = train_5, hidden = c(2,3), threshold = 0.01, stepmax = 10^5) 
+# plot(model3_5)
+# prediction3_5 <- predict(model3_5, newdata = test_5)
+# binaryprediction3_5 <- ifelse(prediction3_5 > 0.5, 1, 0)
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = binaryprediction3_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction3_5), as.factor(test_5$yyes), positive = "1")
+# # Sensitivity : 0.24731;   Pos Pred Value : 0.44231
 
 ```
 
 ```{r}
-# Model 4 (Adjusting Binary Prediction Definition)
-model4_5 <- neuralnet(formula = yyes ~ ., data = train_5)
-plot(model4_5)
-prediction4_5 <- predict(model4_5, newdata = test_5)
-binaryprediction4_5 <- ifelse(prediction4_5 > 0.4, 1, 0)
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = binaryprediction4_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction4_5), as.factor(test_5$yyes), positive = "1")
-#Sensitivity : 0.41935 ; Pos Pred Value : 0.49367 
+# # Model 4 (Adjusting Binary Prediction Definition)
+# model4_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+# plot(model4_5)
+# prediction4_5 <- predict(model4_5, newdata = test_5)
+# binaryprediction4_5 <- ifelse(prediction4_5 > 0.4, 1, 0)
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = binaryprediction4_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction4_5), as.factor(test_5$yyes), positive = "1")
+# #Sensitivity : 0.41935 ; Pos Pred Value : 0.49367 
 ```
 
 ```{r}
-# Model 5 (Adjusting Binary Prediction Definition)
-model5_5 <- neuralnet(formula = yyes ~ ., data = train_5)
-plot(model5_5)
-prediction5_5 <- predict(model5_5, newdata = test_5)
-binaryprediction5_5 <- ifelse(prediction5_5 > 0.3, 1, 0)
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = binaryprediction5_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction5_5), as.factor(test_5$yyes), positive = "1")
-#Sensitivity : 0.48387; Pos Pred Value : 0.43689 
+# # Model 5 (Adjusting Binary Prediction Definition)
+# model5_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+# plot(model5_5)
+# prediction5_5 <- predict(model5_5, newdata = test_5)
+# binaryprediction5_5 <- ifelse(prediction5_5 > 0.3, 1, 0)
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = binaryprediction5_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction5_5), as.factor(test_5$yyes), positive = "1")
+# #Sensitivity : 0.48387; Pos Pred Value : 0.43689 
 ```
 
 ```{r}
-# Model 6 (Adjusting Binary Prediction Definition)
-model6_5 <- neuralnet(formula = yyes ~ ., data = train_5)
-plot(model6_5)
-prediction6_5 <- predict(model6_5, newdata = test_5)
-binaryprediction6_5 <- ifelse(prediction6_5 > 0.2, 1, 0)
-# Create Confusion Matrix
-CrossTable(x = test_5$yyes, y = binaryprediction6_5, propsq = FALSE)
-# Evaluate confusion matrix
-confusionMatrix(as.factor(binaryprediction6_5), as.factor(test_5$yyes), positive = "1")
-#Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
-
-# Comparing all, model6_5 is most accurate, with Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
+# # Model 6 (Adjusting Binary Prediction Definition)
+# model6_5 <- neuralnet(formula = yyes ~ ., data = train_5)
+# plot(model6_5)
+# prediction6_5 <- predict(model6_5, newdata = test_5)
+# binaryprediction6_5 <- ifelse(prediction6_5 > 0.2, 1, 0)
+# # Create Confusion Matrix
+# CrossTable(x = test_5$yyes, y = binaryprediction6_5, propsq = FALSE)
+# # Evaluate confusion matrix
+# confusionMatrix(as.factor(binaryprediction6_5), as.factor(test_5$yyes), positive = "1")
+# #Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
+# 
+# # Comparing all, model6_5 is most accurate, with Sensitivity : 0.36559 ; Pos Pred Value : 0.52308 
 ```
 
 
@@ -1065,6 +1065,7 @@ confusionMatrix(as.factor(predictions_combined_model_5), as.factor(test_5$yyes),
 (profit_5 <- (num_calls_made_5 * success_rate_cluster5 * 6) - (num_calls_made_5 * (num_calls_made_5 / num_potential_calls_5) * 1)) 
 #196.217
 ```
+
 
 ## Chosen Combined Clusters' Additional Data Calculated
 ```{r}
