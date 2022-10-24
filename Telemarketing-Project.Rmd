@@ -13,14 +13,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 NOTE: 
 - to compare models, look at the sensitivity and pos pred values (PPV)
 - we want a aim for a sensitivity of at least 0.167 and larger PPV values (but try to balance the two: have both large sensitivity and large PPV)
 - the sensitivity is the success rate
 - Info about PPV here: https://www.timeofcare.com/positive-predictive-value/
 - Info about calculation of sensitivity and PPV can be found using the following command in R: ?confusionMatrix
-
 
 ## Downloading and Prepping the Data
 
@@ -505,7 +503,7 @@ predictions_glm2 <- ifelse(prediction_values_glm2 > 0.1, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_2$yyes, y = predictions_glm2, propsq = FALSE)
 # Evaluate confusion matrix
-predictions_glm2_confusion <- confusionMatrix(as.factor(predictions_glm2), as.factor(test_2$yyes), positive = "1")
+(predictions_glm2_confusion <- confusionMatrix(as.factor(predictions_glm2), as.factor(test_2$yyes), positive = "1"))
 ```
 
 ## Cluster 2 ANN
@@ -582,14 +580,15 @@ confusionMatrix(as.factor(predictions_combined_model2_1), as.factor(test_2$yyes)
 # 4: Calculate the profit per 100 people:
 # (100 * (# calls made / # potential calls made) * success rate * 6) -
 # (100 * success rate * 1)
-(profit_per_100_2 <- (100 * (num_calls_made_2) * success_rate_cluster2 * 6) - (100 * success_rate_cluster2 * 1))
+(profit_per_100_2 <- (100 * (num_calls_made_2 / num_potential_calls_2) * success_rate_cluster2 * 6)
+                     - (100 * (num_calls_made_2 / num_potential_calls_2) * 1))
 # 5: Also, calculate what the profit is for this chosen model of this cluster
-(profit_2 <- (num_calls_made_2 * success_rate_cluster2 * 6) - (num_calls_made_2 * success_rate_cluster2 * 1)) # 680
+(profit_2 <- (num_calls_made_2 * success_rate_cluster2 * 6) - (num_calls_made_2 * 1))
 ```
 
 ## Conclusion for Cluster 2
 
-For cluster 2, we have chosen a logistic regression model since it has the largest profit per 100 people ($2.072539). In addition, the chosen logistic regression model for cluster  indicates to call 32 people, so it will not be very time consuming to call all these people.
+For cluster 2, the chosen logistic regression model has a profit per 100 people of -$0.8313128, so we will not call anyone in this cluster.
 
 ## Cluster 3
 
@@ -1000,10 +999,7 @@ confusionMatrix(as.factor(binaryprediction6_5), as.factor(test_5$yyes), positive
 # Comparing all, model6_5 is most accurate, with Sensitivity : 0.36559 ; Pos Pred Value : 0.52308
 ```
 
-
-
-
-### Cluster 5 kNN
+### Cluster 5 KNN
 
 ```{r}
 train_labels_5 <- train_5$yyes
@@ -1102,29 +1098,25 @@ For cluster 5, we have chosen a logistic regression model since it has a positiv
 # Do this in meeting 10-23
 # Call people from: 
 # chosen logistic regression model for cluster 1,
-# chosen logistic regression model for cluster 2,
 # chosen logistic regression model for cluster 5,
 # cluster 4 (call all people in cluster 4)
 
 # 1: Get number of potential calls
-(num_potential_calls_total <- num_potential_calls_1 + num_potential_calls_2 
- + num_potential_calls_5 + nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
+(num_potential_calls_total <- num_potential_calls_1 + num_potential_calls_5 + nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
 
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
 # Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
-(num_calls_made_total <- num_calls_made_1 + num_calls_made_2 + num_calls_made_5 + num_yyes_1)
+(num_calls_made_total <- num_calls_made_1 + num_calls_made_5 + num_yyes_4)
 
 # 3: Calculate the success rate (number of people we will call 
 #    (model predicted yyes to be 1) who actually have a yyes value of 1 
 #    divided by the number of people we will call)
-predicted_correctly_1s_1 <- confusion_matrix_model2_ANN1$table[4]
-predicted_correctly_1s_2 <- confusion_matrix_model2_ANN1$table[4]
-predicted_correctly_1s_5 <- confusion_matrix_model2_ANN1$table[4]
+predicted_correctly_1s_1 <- confusion_matrix_glm1_1$table[4]
+predicted_correctly_1s_5 <- confusion_matrix_glm1_5$table[4]
 # use num_yyes_4 for cluster 4 for number of successes
 
-total_successes <- predicted_correctly_1s_1 + predicted_correctly_1s_2 +
-                   predicted_correctly_1s_5 + num_yyes_4
+(total_successes <- predicted_correctly_1s_1 + predicted_correctly_1s_5 + num_yyes_4)
 
 (success_rate_total <- total_successes / num_calls_made_total)
 
@@ -1142,8 +1134,8 @@ total_successes <- predicted_correctly_1s_1 + predicted_correctly_1s_2 +
 ```
 
 
-
-=======
 ## Conclusion
 
-Do this in meeting 10-23
+We first use k-means clustering with a k of 5 to get the success rates of 5 clusters. One cluster had a success rate greater than 16.67% (this threshold occurs because we make \$6 a sale and lose \$1 for each call), so we will call everyone in that cluster (cluster 4). Then, looking at the other four clusters, we created logistic regression, ANN, KNN, and a combined model using training data which predicted for if there was a sale for the test data. If at least two models predicted a yyes value of 1 for an individual, the combined model predicted a yyes value of 1 for that person. To choose models, we looked at the sensitivity and positive prediction values. We wanted larger sensitivity and positive prediction value while trying to balance them. Then, we computed the profit per 100 people for the selected logistic regression model for clusters 2, 3, and 5 for one model and computed the profit per 100 people for multiple models for cluster 1. For cluster 1, we chose the model with the largest profit per 100 people. For clusters 1 and 5, they had a positive profit per 100 people, so we decided that we will call those selected in these clusters (which are the people that were predicted to have a yyes value of 1 in cluster 1 and cluster 5). Clusters 2 and 3 had negative values for profit per 100 people, so we decided that we should not call anyone in these clusters.
+
+Using this information, we will call all of the people in cluster 4 and the people predicted to have yyes values of 1 for clusters 1 and 5 (using their selected logistic regression models for them). Based on the test data, we found a profit per 100 people of \$78.79577. For the test data, we get a total profit of \$11336.86. In addition for the test data, we found that there are 12290 potential people we could call, and we will call 1968 people. The number of sales made is 1942 for the test data. The success rate is 0.9867886 for the test data; this indicates potential overfitting of the models for the test data.
