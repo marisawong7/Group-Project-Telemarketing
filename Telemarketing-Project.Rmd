@@ -1107,7 +1107,8 @@ For cluster 5, we have chosen a logistic regression model since it has a positiv
 # cluster 4 (call all people in cluster 4)
 
 # 1: Get number of potential calls
-(num_potential_calls_total <- num_potential_calls_1 + num_potential_calls_2 + num_potential_calls_5 + nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
+(num_potential_calls_total <- num_potential_calls_1 + num_potential_calls_2 
+ + num_potential_calls_5 + nrow(tele_norm_k_means[tele_norm_k_means$cluster == 4,]))
 
 # 2: Get number of people we will call in this cluster 
 # (number of people we predicted yyes to be 1 in this cluster)
