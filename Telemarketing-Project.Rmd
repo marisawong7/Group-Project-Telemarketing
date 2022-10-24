@@ -501,7 +501,7 @@ summary(glm_model_2)
 # Get response values for testing data
 prediction_values_glm2 <- predict(glm_model_2, newdata = test_2, type = "response")
 # Get predictions for testing data
-predictions_glm2 <- ifelse(prediction_values_glm2 > 0.5, 1, 0)
+predictions_glm2 <- ifelse(prediction_values_glm2 > 0.1, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_2$yyes, y = predictions_glm2, propsq = FALSE)
 # Evaluate confusion matrix
@@ -558,6 +558,33 @@ predictions_combined_model2_1 <- ifelse(added_predictors_2 >= 2, 1, 0)
 CrossTable(x = test_2$yyes, y = predictions_combined_model2_1, propsq = FALSE)
 # Evaluate confusion matrix
 confusionMatrix(as.factor(predictions_combined_model2_1), as.factor(test_2$yyes), positive = "1")
+```
+
+
+## Cluster 2 Additional Data Calculated for Chosen Model
+```{r}
+# based on comparing Sensitivity and Pos Pred Value
+# glm: sensitivity: 0.30493; pos pred: 0.67327
+# ANN: sensitivity: 0.35650; pos pred: 0.55789
+# KNN: sensitivity: 0.21076; pos pred: 0.54023
+# Combined: sensitivity: 0.6771; pos pred: 0.4461
+# Will use glm model
+# 1: Get number of potential calls (number of values in the test set of this cluster)
+(num_potential_calls_2 <- nrow(test_2)) #2896
+# 2: Get number of people we will call in this cluster 
+# (number of people we predicted yyes to be 1 in this cluster)
+# Add up values predicted to be 1 (from confusion matrix of chosen model for this cluster):
+(num_calls_made_2 <- predictions_glm2_confusion$table[2] + predictions_glm2_confusion$table[4])
+# 3: Calculate the success rate (number of people we will call 
+#    (model predicted yyes to be 1) who actually have a yyes value of 1 
+#    divided by the number of people we will call)
+(success_rate_cluster2 <- predictions_glm2_confusion$table[4] / num_calls_made_2)
+# 4: Calculate the profit per 100 people:
+# (100 * (# calls made / # potential calls made) * success rate * 6) -
+# (100 * success rate * 1)
+(profit_per_100_2 <- (100 * (num_calls_made_2) * success_rate_cluster2 * 6) - (100 * success_rate_cluster2 * 1))
+# 5: Also, calculate what the profit is for this chosen model of this cluster
+(profit_2 <- (num_calls_made_2 * success_rate_cluster2 * 6) - (num_calls_made_2 * success_rate_cluster2 * 1)) # 680
 ```
 
 
