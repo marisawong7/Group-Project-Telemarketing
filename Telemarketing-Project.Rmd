@@ -505,7 +505,7 @@ predictions_glm2 <- ifelse(prediction_values_glm2 > 0.1, 1, 0)
 # Create Confusion Matrix
 CrossTable(x = test_2$yyes, y = predictions_glm2, propsq = FALSE)
 # Evaluate confusion matrix
-confusionMatrix(as.factor(predictions_glm2), as.factor(test_2$yyes), positive = "1")
+predictions_glm2_confusion <- confusionMatrix(as.factor(predictions_glm2), as.factor(test_2$yyes), positive = "1")
 ```
 
 ## Cluster 2 ANN
@@ -587,6 +587,9 @@ confusionMatrix(as.factor(predictions_combined_model2_1), as.factor(test_2$yyes)
 (profit_2 <- (num_calls_made_2 * success_rate_cluster2 * 6) - (num_calls_made_2 * success_rate_cluster2 * 1)) # 680
 ```
 
+## Conclusion for Cluster 2
+
+For cluster 2, we have chosen a logistic regression model since it has the largest profit per 100 people ($2.072539). In addition, the chosen logistic regression model for cluster  indicates to call 32 people, so it will not be very time consuming to call all these people.
 
 ## Cluster 3
 
